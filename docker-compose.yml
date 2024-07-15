@@ -1,27 +1,13 @@
-version: '3.4'
-
 services:
   database:
-    restart: always
-    environment:
-      - DATABASE_WEB_HOSTNAMES=${TRADERX_FQDN:-localhost}
-    image: database
-    build:
-      context: database
-      dockerfile: Dockerfile
-    working_dir: /database
+    image: ghcr.io/xtdb/xtdb-standalone-ea:latest
     expose:
       - 18082
-      - 18083
-      - 18084
     ports:
-      - 18082:18082
-      - 18083:18083
-      - 18084:18084
+      - 18082:5432
     volumes:
       # Mount the root folder that contains .git
       - .:/workspace:cached
-    command: ./run.sh
     networks:
       - localnet
   reference-data:
@@ -88,6 +74,7 @@ services:
       - 18088:18088
     environment:
       - DATABASE_TCP_HOST=database
+      - DATABASE_TCP_PORT=5432
       - PEOPLE_SERVICE_HOST=people-service
     volumes:
       # Mount the root folder that contains .git
