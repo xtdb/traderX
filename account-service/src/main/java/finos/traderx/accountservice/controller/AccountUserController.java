@@ -72,12 +72,12 @@ public class AccountUserController {
 
 		try {
 			response = this.restTemplate.getForEntity(url, Person.class);
-			logger.info("Validaded person " + response.getBody().toString());
+            logger.info("Validaded person {}", response.getBody().toString());
 			return true;
 		}
 		catch (HttpClientErrorException ex) {
 			if (ex.getRawStatusCode() == 404) {
-				logger.info(username + " not found in People service.");
+                logger.info("{} not found in People service.", username);
 			}
 			else {
 				logger.error(ex.getMessage());

@@ -6,7 +6,7 @@
  */
 
 plugins {
-  id 'java'
+  id 'application'
   id 'org.springframework.boot' version '3.3.1'
   id 'io.spring.dependency-management' version '1.1.5'
 }
@@ -18,11 +18,26 @@ java{
 	sourceCompatibility = JavaVersion.VERSION_21
 }
 
+application {
+	mainClass = 'finos.traderx.accountservice.AccountServiceApplication'
+}
+
+repositories {
+	mavenCentral()
+	maven {
+		url = uri("https://clojars.org/repo/")
+	}
+	maven {
+		url = uri("https://s01.oss.sonatype.org/content/repositories/snapshots")
+	}
+}
+
 dependencies {
 
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'com.h2database:h2:2.2.224'
+	implementation 'org.postgresql:postgresql:42.2.23'
 	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.5.0'
 
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
