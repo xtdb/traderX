@@ -16,7 +16,7 @@ public interface AccountRepository extends Repository<Account, Integer> {
 
     Optional<Account> findById(int id);
 
-    Iterable<Account> findAll();
+    Iterable<Account> findAll(String asOf);
 
     class AccountRepositoryImpl implements AccountRepository {
 
@@ -61,17 +61,29 @@ public interface AccountRepository extends Repository<Account, Integer> {
         }
 
         @Override
-        public Iterable<Account> findAll() {
-            try (var conn = pool.getConnection();
-                 var stmt = conn.prepareStatement("SELECT * FROM account");
-                 var res = stmt.executeQuery()) {
+        public Iterable<Account> findAll(String asOf) {
+            try (var conn = pool.getConnection()) {
+                try (var stmt = conn.createStatement()) {
+                        try (var res =
+                                     switch (asOf) {
+                                         case "NOW":
+                                             yield stmt.executeQuery("SELECT _id, display_name FROM account FOR VALID_TIME AS OF NOW");
+                                         case "ALL_TIME":
+                                             yield stmt.executeQuery("SELECT _id, display_name FROM account FOR ALL VALID_TIME");
+                                         default:
+                                             yield stmt.executeQuery("SELECT _id, display_name FROM account FOR VALID_TIME AS OF TIMESTAMP '" + asOf + "'");
+                                     })
+                        {
 
-                var out = new LinkedList<Account>();
-                while (res.next()) {
-                    out.add(fromResultSet(res));
+                            var out = new LinkedList<Account>();
+                            while (res.next()) {
+                                out.add(fromResultSet(res));
+                            }
+                            return out;
+
+                        }
+
                 }
-                return out;
-
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }

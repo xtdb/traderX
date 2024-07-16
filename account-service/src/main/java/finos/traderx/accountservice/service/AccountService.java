@@ -17,9 +17,9 @@ public class AccountService {
 	@Autowired
 	AccountRepository accountRepository;
 
-	public List<Account> getAllAccount() {
+	public List<Account> getAllAccount(String asOf) {
 		List<Account> accounts = new ArrayList<Account>();
-		this.accountRepository.findAll().forEach(account -> accounts.add(account));
+		this.accountRepository.findAll(asOf).forEach(account -> accounts.add(account));
 		return accounts;
 	}
 
