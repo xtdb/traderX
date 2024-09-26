@@ -16,7 +16,6 @@ import { environment } from 'main/environments/environment';
   styleUrls: ['./report.component.scss']
 })
 export class ReportComponent implements OnInit {
-  priceUpdateIntervalMs = environment.priceUpdateIntervalMs;
   accounts: Account[] = [];
   accountModel?: Account = undefined;
   stocks: Stock[] = [];
@@ -39,10 +38,10 @@ export class ReportComponent implements OnInit {
       }
     },
     ticksValuesTooltip: (index): string => {
-      return this.getPointDate(index).replace('T', '@').replace('Z','');
+      return this.getPointDate(index).replace('T', '@').replace('Z', '');
     },
     ticksTooltip: (index): string => {
-      return this.getPointDate(index).replace('T', '@').replace('Z','');
+      return this.getPointDate(index).replace('T', '@').replace('Z', '');
     }
   };
   dateValue: number = 0;
@@ -56,17 +55,18 @@ export class ReportComponent implements OnInit {
     }
   };
   pricesAsOf: string = this.getDateAt(this.dateValue).toDateString();
+  priceUpdateIntervalSeconds: number = parseInt(environment.priceUpdateIntervalMs) / 1000;
 
   constructor(private accountService: AccountService,
-      private symbolService: SymbolService,
-      private priceService: PriceService,
-      private tradeFeed: TradeFeedService) { }
+    private symbolService: SymbolService,
+    private priceService: PriceService,
+    private tradeFeed: TradeFeedService) { }
 
   ngOnInit(): void {
     this.accountService.getAccounts().subscribe((accounts) => {
-        console.log('ReportComponent init', accounts);
-        this.accounts = accounts;
-        this.setAccount(this.accounts[5]);
+      console.log('ReportComponent init', accounts);
+      this.accounts = accounts;
+      this.setAccount(this.accounts[5]);
     });
     this.symbolService.getStocks().subscribe((stocks) => this.stocks = stocks);
   }
@@ -90,7 +90,7 @@ export class ReportComponent implements OnInit {
 
   updateSlider(accountId: number, start: number) {
     const startDate = this.points[start];
-    const label = `${startDate ? ('Time as of: ' + startDate.replace('T', ' ').replace('Z','')) : 'Now'}`;
+    const label = `${startDate ? ('Time as of: ' + startDate.replace('T', ' ').replace('Z', '')) : 'Now'}`;
     this.intervalModel = {
       start: startDate,
       accountId,
@@ -112,8 +112,8 @@ export class ReportComponent implements OnInit {
 
   private getDateAt(index: number) {
     let date = new Date();
-     date.setDate(date.getDate() - index);
-     return date;
+    date.setDate(date.getDate() - index);
+    return date;
   }
 
   private setAccount(account: Account) {
@@ -129,6 +129,6 @@ export class ReportComponent implements OnInit {
   }
 
   private setSliderValues(points: String[]) {
-    this.options = Object.assign({}, this.options, {ceil: points.length});
+    this.options = Object.assign({}, this.options, { ceil: points.length });
   }
 }
